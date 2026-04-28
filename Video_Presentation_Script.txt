@@ -1,0 +1,26 @@
+Video Presentation Script (15-20 minutes)
+Project: Predictive Maintenance for Aircraft Engines: A Machine Learning Approach to RUL Prediction
+
+0:00-1:30 - Title and Motivation
+Hello, my project is Predictive Maintenance for Aircraft Engines: A Machine Learning Approach to Remaining Useful Life Prediction. The objective is to estimate how many operating cycles remain before an aircraft turbofan engine fails. This is important because aircraft maintenance is safety-critical and expensive. A good predictive maintenance model can reduce unplanned downtime, improve maintenance scheduling, and help avoid replacing parts too early.
+
+1:30-4:00 - Problem Definition
+The machine learning problem is a supervised regression task. For each engine cycle, we observe operational settings and sensor readings. The target is Remaining Useful Life, or RUL, which means the number of cycles left before failure. In the training data, each engine is run until failure, so I calculate RUL as the engine's maximum cycle minus the current cycle. In the test data, the trajectories are incomplete, and the provided RUL_FD001 file gives the true RUL after each test engine's final observed cycle.
+
+4:00-7:00 - Dataset
+The dataset is the NASA C-MAPSS FD001 turbofan engine degradation dataset. The training set contains 100 engine units with complete run-to-failure histories. The test set contains 100 engine units with partial histories. Each row contains the engine ID, cycle number, three operational settings, and twenty-one sensor readings. FD001 is a good starting subset because it uses one operating condition and one fault mode, so the project can focus on modeling degradation rather than handling multiple operating regimes.
+
+7:00-10:00 - Preprocessing
+The first preprocessing step was assigning clear column names to all variables. Then I computed the RUL label for every row in the training set. I capped RUL at 130 cycles to avoid overemphasizing early-life cycles where the sensor degradation signal is weak. I also removed constant or nearly uninformative features, including setting_3 and sensors 1, 5, 6, 10, 16, 18, and 19. The remaining settings and sensors were used as predictive features.
+
+10:00-13:00 - Models
+I compared three models. Ridge Regression served as a linear baseline. Random Forest was selected because it captures nonlinear relationships between sensor measurements and RUL and is robust to noisy data. Gradient Boosting was included as another ensemble model that builds a sequence of trees to reduce prediction error. All models were trained on the training trajectories and evaluated on the final cycle of each test engine using the official RUL labels.
+
+13:00-15:30 - Results
+The best model was Random Forest. On capped RUL labels, Random Forest achieved an RMSE of 18.20 cycles and an MAE of 13.18 cycles. Gradient Boosting achieved an RMSE of 18.45 and MAE of 12.96. Ridge Regression performed worse, with an RMSE of 21.23 and MAE of 16.93. These results show that nonlinear tree-based models are more effective than a purely linear model for this problem.
+
+15:30-18:30 - Streamlit Demo
+Now I will demonstrate the web app. I run the app with: streamlit run app.py. The app loads the saved best_rul_model.joblib file. On the left, the app displays the model results. I can use the upload mode to upload data/demo_sample_engines.csv, and the app returns a predicted RUL value for each engine. I can also switch to manual input mode, enter sensor readings for a single engine cycle, and click Predict RUL. The app returns the predicted remaining cycles and a maintenance priority message.
+
+18:30-20:00 - Conclusion
+In conclusion, this project shows that machine learning can predict aircraft engine Remaining Useful Life from sensor data. The Random Forest model produced the strongest RMSE among the tested methods and was deployed in a working Streamlit prototype. Future improvements could include LSTM or temporal convolutional models, confidence intervals, and real-time streaming integration for operational maintenance decisions.
